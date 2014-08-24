@@ -5,9 +5,18 @@
 
 ## This function lists both the given matrix and it's inverse.
 
-makeCacheMatrix <- function(x) {
-  y <- solve(x)
-  return(list(original = x, solved =y))
+makeCacheMatrix <- function(x =matrix()) {
+  m <- NULL
+  set <- function(y) {
+    x <<- y
+    m <<- NULL
+  }
+  get <- function() x
+  setinv <- function(inverse) m <<- inverse
+  getinv <- function() m
+  list(set = set, get = get,
+       setinv = setinv,
+       getinv = getinv)
   
 }
 
@@ -18,15 +27,15 @@ makeCacheMatrix <- function(x) {
 ## beside the original matrix. If it is there then this function lists 
 ## both of them, if the solved one is missing then it calculates it.
 
-cachesolve <- function(x) {
-  n <- x$solved
-  if(!is.null(n)) {
+cachesolve <- function(x, ...) {
+  m <- x$getinv()
+  if(!is.null(m)) {
     message("getting cached data")
-    return(n)
+    return(m)
   }
-  data <- x$original
-  
-  x$solved <- solve(data)
-  return(x)
+  data <- x$get()
+  m <- solve(data, ...)
+  x$setinv(m)
+  m
 }
 
